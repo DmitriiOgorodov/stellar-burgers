@@ -71,7 +71,7 @@ const App = () => (
         }
       />
       <Route
-        path='/profile/orders:number'
+        path='/profile/orders/:number'
         element={
           <ProtectedRoute>
             <ProfileOrders />
