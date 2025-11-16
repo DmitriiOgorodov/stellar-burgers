@@ -1,8 +1,21 @@
-import { Route, Routes, useLocation, useNavigate, useParams, Navigate } from 'react-router-dom';
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+  Navigate
+} from 'react-router-dom';
 import '../../index.css';
 import styles from './app.module.css';
 
-import { AppHeader, ProtectedRoute, OrderInfo, Modal, IngredientDetails } from '@components';
+import {
+  AppHeader,
+  ProtectedRoute,
+  OrderInfo,
+  Modal,
+  IngredientDetails
+} from '@components';
 import {
   ConstructorPage,
   Feed,
@@ -105,7 +118,10 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal onClose={() => window.history.back()} title={'Детали ингредиента'}>
+              <Modal
+                onClose={() => window.history.back()}
+                title={'Детали ингредиента'}
+              >
                 <IngredientDetails />
               </Modal>
             }
@@ -113,7 +129,10 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal onClose={() => window.history.back()} title={'Информация о заказе'}>
+              <Modal
+                onClose={() => window.history.back()}
+                title={'Информация о заказе'}
+              >
                 <OrderInfo />
               </Modal>
             }
@@ -122,7 +141,10 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <Modal onClose={() => window.history.back()} title={'Информация о заказе'}>
+                <Modal
+                  onClose={() => window.history.back()}
+                  title={'Информация о заказе'}
+                >
                   <OrderInfo />
                 </Modal>
               </ProtectedRoute>
