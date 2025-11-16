@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getUserApi, loginUserApi, logoutApi, registerUserApi, updateUserApi } from '@api';
+import {
+  getUserApi,
+  loginUserApi,
+  logoutApi,
+  registerUserApi,
+  updateUserApi
+} from '@api';
 import { setCookie } from '../../utils/cookie';
 import { TLoginData, TRegisterData } from '@api';
 import { TUser } from '@utils-types';
@@ -18,14 +24,17 @@ const initialState: UserState = {
   error: null
 };
 
-export const getUser = createAsyncThunk('user/getUser', async (_, { rejectWithValue }) => {
-  try {
-    const data = await getUserApi();
-    return data.user;
-  } catch (e: any) {
-    return rejectWithValue(e?.message ?? 'getUser failed');
+export const getUser = createAsyncThunk(
+  'user/getUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await getUserApi();
+      return data.user;
+    } catch (e: any) {
+      return rejectWithValue(e?.message ?? 'getUser failed');
+    }
   }
-});
+);
 
 export const login = createAsyncThunk(
   'user/login',
@@ -33,7 +42,8 @@ export const login = createAsyncThunk(
     try {
       const data = await loginUserApi(payload);
       if (data.accessToken) setCookie('accessToken', data.accessToken);
-      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+      if (data.refreshToken)
+        localStorage.setItem('refreshToken', data.refreshToken);
       return data.user;
     } catch (e: any) {
       return rejectWithValue(e?.message ?? 'login failed');
@@ -47,7 +57,8 @@ export const register = createAsyncThunk(
     try {
       const data = await registerUserApi(payload);
       if (data.accessToken) setCookie('accessToken', data.accessToken);
-      if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+      if (data.refreshToken)
+        localStorage.setItem('refreshToken', data.refreshToken);
       return data.user;
     } catch (e: any) {
       return rejectWithValue(e?.message ?? 'register failed');
@@ -72,6 +83,7 @@ export const logout = createAsyncThunk('user/logout', async () => {
   // Очистка токенов
   setCookie('accessToken', '', { expires: -1 });
   localStorage.removeItem('refreshToken');
+  return null; // Явно возвращаем null вместо undefined
 });
 
 export const userSlice = createSlice({
@@ -90,14 +102,15 @@ export const userSlice = createSlice({
       })
       .addCase(getUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload ?? null;
         state.isAuthChecked = true;
       })
       .addCase(getUser.rejected, (state, action) => {
         state.loading = false;
         state.user = null;
         state.isAuthChecked = true; // даже при ошибке отметим как проверено
-        state.error = (action.payload as string) || action.error.message || null;
+        state.error =
+          (action.payload as string) || action.error.message || null;
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -105,12 +118,13 @@ export const userSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload ?? null;
         state.isAuthChecked = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = (action.payload as string) || action.error.message || null;
+        state.error =
+          (action.payload as string) || action.error.message || null;
       })
       .addCase(register.pending, (state) => {
         state.loading = true;
@@ -118,15 +132,18 @@ export const userSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        state.user = action.payload ?? null;
         state.isAuthChecked = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = (action.payload as string) || action.error.message || null;
+        state.error =
+          (action.payload as string) || action.error.message || null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.user = action.payload;
+        if (action.payload) {
+          state.user = action.payload;
+        }
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
