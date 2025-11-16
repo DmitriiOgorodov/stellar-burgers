@@ -1,21 +1,47 @@
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from '../../services/store';
-import { fetchOrderByNumber } from '../../services/slices/orderSlice';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  fetchOrderByNumber,
+  selectOrderDetails,
+  selectOrderDetailsError,
+  selectOrderDetailsLoading
+} from '../../services/slices/orderSlice';
+import {
+  fetchIngredients,
+  selectIngredients,
+  selectIngredientsLoading
+} from '../../services/slices/ingredientsSlice';
 
-export const OrderInfo: FC = () => {
+type OrderInfoProps = {
+  showOrderNumber?: boolean;
+};
+
+export const OrderInfo: FC<OrderInfoProps> = ({ showOrderNumber = true }) => {
   const { number } = useParams<{ number: string }>();
   const dispatch = useDispatch();
-  const { current: orderData, loading } = useSelector((state) => state.order);
-  const { items: ingredients } = useSelector((state) => state.ingredients);
+
+  const orderData = useSelector(selectOrderDetails);
+  const orderLoading = useSelector(selectOrderDetailsLoading);
+  const orderError = useSelector(selectOrderDetailsError);
+
+  const ingredients = useSelector(selectIngredients);
+  const ingredientsLoading = useSelector(selectIngredientsLoading);
 
   useEffect(() => {
-    if (number) dispatch(fetchOrderByNumber(Number(number)));
-  }, [dispatch, number]);
+    if (!ingredients.length) {
+      dispatch(fetchIngredients());
+    }
 
+    if (number) {
+      dispatch(fetchOrderByNumber(Number(number)));
+    }
+  }, [dispatch, number, ingredients.length]);
+
+  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -57,9 +83,15 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (loading || !orderInfo) {
+  if (orderLoading || ingredientsLoading) {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  if (!orderInfo || orderError) {
+    return <p className={`pt-6 text text_type_main-medium`}>Заказ не найден</p>;
+  }
+
+  return (
+    <OrderInfoUI orderInfo={orderInfo!} showOrderNumber={showOrderNumber} />
+  );
 };

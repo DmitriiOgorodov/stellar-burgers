@@ -1,42 +1,48 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { orderBurgerApi, getOrderByNumberApi } from '@api';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
+import { orderBurgerApi, getOrderByNumberApi } from '@api';
+import type { RootState } from '../store';
 
-type OrderState = {
+type OrderDetailsState = {
+  order: TOrder | null;
   loading: boolean;
   error: string | null;
-  modalData: TOrder | null;
-  current: TOrder | null;
 };
+
+interface OrderState {
+  create: OrderDetailsState;
+  details: OrderDetailsState;
+}
 
 const initialState: OrderState = {
-  loading: false,
-  error: null,
-  modalData: null,
-  current: null
+  create: {
+    order: null,
+    loading: false,
+    error: null
+  },
+  details: {
+    order: null,
+    loading: false,
+    error: null
+  }
 };
 
-export const placeOrder = createAsyncThunk(
-  'order/place',
-  async (ingredientIds: string[], { rejectWithValue }) => {
-    try {
-      const data = await orderBurgerApi(ingredientIds);
-      return data.order;
-    } catch (e: any) {
-      return rejectWithValue(e?.message ?? 'order failed');
-    }
+export const createOrder = createAsyncThunk(
+  'order/createOrder',
+  async (ingredients: string[]) => {
+    const response = await orderBurgerApi(ingredients);
+    return response.order as TOrder;
   }
 );
 
 export const fetchOrderByNumber = createAsyncThunk(
-  'order/fetchByNumber',
-  async (number: number, { rejectWithValue }) => {
-    try {
-      const data = await getOrderByNumberApi(number);
-      return data.orders[0] ?? null;
-    } catch (e: any) {
-      return rejectWithValue(e?.message ?? 'order load failed');
+  'order/fetchOrderByNumber',
+  async (number: number) => {
+    const response = await getOrderByNumberApi(number);
+    if (response.success && response.orders.length > 0) {
+      return response.orders[0] as TOrder;
     }
+    throw new Error('Order not found');
   }
 );
 
@@ -44,42 +50,66 @@ const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    clearOrder(state) {
-      state.modalData = null;
-      state.error = null;
+    clearCreationState(state) {
+      state.create.order = null;
+      state.create.error = null;
+      state.create.loading = false;
+    },
+    clearDetailsState(state) {
+      state.details.order = null;
+      state.details.error = null;
+      state.details.loading = false;
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(placeOrder.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      // Создание заказа
+      .addCase(createOrder.pending, (state) => {
+        state.create.loading = true;
+        state.create.order = null;
+        state.create.error = null;
       })
-      .addCase(placeOrder.fulfilled, (state, action) => {
-        state.loading = false;
-        state.modalData = action.payload ?? null;
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.create.loading = false;
+        state.create.order = action.payload;
       })
-      .addCase(placeOrder.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          (action.payload as string) || action.error.message || null;
+      .addCase(createOrder.rejected, (state, action) => {
+        state.create.loading = false;
+        state.create.error = action.error.message || 'Failed to create order';
       })
+
+      // Детали заказа
       .addCase(fetchOrderByNumber.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.current = null;
+        state.details.loading = true;
+        state.details.order = null;
+        state.details.error = null;
       })
       .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
-        state.loading = false;
-        state.current = action.payload ?? null;
+        state.details.loading = false;
+        state.details.order = action.payload;
       })
       .addCase(fetchOrderByNumber.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          (action.payload as string) || action.error.message || null;
+        state.details.loading = false;
+        state.details.error = action.error.message || 'Failed to fetch order';
       });
   }
 });
 
-export const { clearOrder } = orderSlice.actions;
+export const { clearCreationState, clearDetailsState } = orderSlice.actions;
+
+// Селекторы
+export const selectCreationOrder = (state: RootState) =>
+  state.order.create.order;
+export const selectCreationProcessing = (state: RootState) =>
+  state.order.create.loading;
+export const selectCreationError = (state: RootState) =>
+  state.order.create.error;
+
+export const selectOrderDetails = (state: RootState) =>
+  state.order.details.order;
+export const selectOrderDetailsLoading = (state: RootState) =>
+  state.order.details.loading;
+export const selectOrderDetailsError = (state: RootState) =>
+  state.order.details.error;
+
 export default orderSlice.reducer;

@@ -1,22 +1,24 @@
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
 import { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
-import { fetchFeeds } from '../../services/slices/feedsSlice';
+import { useSelector, useDispatch } from '../../services/store';
+import { fetchFeeds, selectFeed } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
-  const { orders, loading } = useSelector((state) => state.feeds);
+  const { orders, loading } = useSelector(selectFeed);
 
   useEffect(() => {
-    if (!orders.length) dispatch(fetchFeeds());
+    dispatch(fetchFeeds());
   }, [dispatch]);
 
-  if (loading && !orders.length) {
+  const handleGetFeeds = () => {
+    dispatch(fetchFeeds());
+  };
+
+  if (loading || !orders.length) {
     return <Preloader />;
   }
 
-  return (
-    <FeedUI orders={orders} handleGetFeeds={() => dispatch(fetchFeeds())} />
-  );
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };

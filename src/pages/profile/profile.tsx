@@ -1,11 +1,17 @@
 import { ProfileUI } from '@ui-pages';
-import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { FC, SyntheticEvent, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
-import { updateUser } from '../../services/slices/userSlice';
+import {
+  updateUser,
+  selectUser,
+  selectUserError
+} from '../../services/slices/userSlice';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();
-  const { user, loading } = useSelector((state) => state.user);
+  const user = useSelector(selectUser);
+  const error = useSelector(selectUserError);
+  const prevUserRef = useRef(user);
 
   const [formValue, setFormValue] = useState({
     name: user?.name || '',
@@ -14,11 +20,14 @@ export const Profile: FC = () => {
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    if (prevUserRef.current !== user && user) {
+      setFormValue({
+        name: user.name || '',
+        email: user.email || '',
+        password: ''
+      });
+    }
+    prevUserRef.current = user;
   }, [user]);
 
   const isFormChanged =
@@ -28,13 +37,7 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    const payload: { name?: string; email?: string; password?: string } = {};
-    if (formValue.name !== user?.name) payload.name = formValue.name;
-    if (formValue.email !== user?.email) payload.email = formValue.email;
-    if (formValue.password) payload.password = formValue.password;
-    if (Object.keys(payload).length > 0) {
-      dispatch(updateUser(payload));
-    }
+    dispatch(updateUser(formValue));
   };
 
   const handleCancel = (e: SyntheticEvent) => {
@@ -60,8 +63,7 @@ export const Profile: FC = () => {
       handleCancel={handleCancel}
       handleSubmit={handleSubmit}
       handleInputChange={handleInputChange}
+      updateUserError={error || undefined}
     />
   );
-
-  return null;
 };

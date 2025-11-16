@@ -6,20 +6,18 @@ import {
   useSelector as selectorHook
 } from 'react-redux';
 
-import { ingredientsSlice } from './slices/ingredientsSlice';
+import ingredientsReducer from './slices/ingredientsSlice';
+import burgerConstructorReducer from './slices/burgerConstructorSlice';
 import userReducer from './slices/userSlice';
-import constructorReducer from './slices/constructorSlice';
+import feedReducer from './slices/feedSlice';
 import orderReducer from './slices/orderSlice';
-import feedsReducer from './slices/feedsSlice';
-import profileOrdersReducer from './slices/profileOrdersSlice';
 
-const rootReducer = combineReducers({
-  ingredients: ingredientsSlice.reducer,
+export const rootReducer = combineReducers({
+  ingredients: ingredientsReducer,
+  burgerConstructor: burgerConstructorReducer,
   user: userReducer,
-  burgerConstructor: constructorReducer,
-  order: orderReducer,
-  feeds: feedsReducer,
-  profileOrders: profileOrdersReducer
+  feed: feedReducer,
+  order: orderReducer
 });
 
 const store = configureStore({
@@ -31,7 +29,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
 
-export const useDispatch: () => AppDispatch = () => dispatchHook();
+export const useDispatch: () => AppDispatch = () => dispatchHook<AppDispatch>();
 export const useSelector: TypedUseSelectorHook<RootState> = selectorHook;
 
 export default store;

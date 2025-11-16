@@ -2,42 +2,55 @@ import { FC, useMemo } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
-import { placeOrder, clearOrder } from '../../services/slices/orderSlice';
-import { clearConstructor } from '../../services/slices/constructorSlice';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {
+  createOrder,
+  clearCreationState,
+  selectCreationOrder,
+  selectCreationProcessing
+} from '../../services/slices/orderSlice';
+import {
+  clearConstructor,
+  selectConstructor
+} from '../../services/slices/burgerConstructorSlice';
+import { selectIsAuthenticated } from '../../services/slices/userSlice';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  // Защитный доступ к слайсу конструктора на случай раннего рендера/HMR
-  const constructorItems = useSelector(
-    (state) => state.burgerConstructor?.items
-  ) ?? {
-    bun: null,
-    ingredients: [] as TConstructorIngredient[]
-  };
-  const { loading: orderRequest, modalData: orderModalData } = useSelector(
-    (state) => state.order
-  );
-  const user = useSelector((state) => state.user.user);
+
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  const constructorItems = useSelector(selectConstructor);
+  const orderRequest = useSelector(selectCreationProcessing);
+  const orderData = useSelector(selectCreationOrder);
 
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
-    if (!user) {
-      navigate('/login', { replace: true, state: { from: location } });
+
+    if (!isAuthenticated) {
+      navigate('/login');
       return;
     }
-    const ingredientIds: string[] = [
+
+    const ingredientIds = [
       constructorItems.bun._id,
-      ...constructorItems.ingredients.map((i) => i._id),
+      ...constructorItems.ingredients.map((item) => item._id),
       constructorItems.bun._id
     ];
-    dispatch(placeOrder(ingredientIds));
+
+    dispatch(createOrder(ingredientIds))
+      .unwrap()
+      .then(() => {
+        dispatch(clearConstructor());
+      })
+      .catch(() => {
+        // Не очищаем при ошибке
+      });
   };
+
   const closeOrderModal = () => {
-    dispatch(clearOrder());
-    dispatch(clearConstructor());
+    dispatch(clearCreationState());
   };
 
   const price = useMemo(
@@ -55,7 +68,7 @@ export const BurgerConstructor: FC = () => {
       price={price}
       orderRequest={orderRequest}
       constructorItems={constructorItems}
-      orderModalData={orderModalData}
+      orderModalData={orderData}
       onOrderClick={onOrderClick}
       closeOrderModal={closeOrderModal}
     />
