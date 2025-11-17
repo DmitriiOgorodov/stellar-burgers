@@ -2,10 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { FC, ReactElement } from 'react';
 import { useSelector } from '../../services/store';
 import { Preloader } from '../ui/preloader';
-import {
-  selectIsAuthenticated,
-  selectIsAuthChecked
-} from '../../services/slices/userSlice';
+import { selectIsAuthenticated, selectIsAuthChecked } from '@selectors';
 
 type ProtectedRouteProps = {
   forUnauthorized?: boolean;

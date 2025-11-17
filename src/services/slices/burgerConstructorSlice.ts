@@ -58,11 +58,4 @@ export const {
   clearConstructor
 } = burgerConstructorSlice.actions;
 
-// Селекторы
-export const selectConstructor = (state: RootState) => state.burgerConstructor;
-export const selectConstructorBun = (state: RootState) =>
-  state.burgerConstructor.bun;
-export const selectConstructorIngredients = (state: RootState) =>
-  state.burgerConstructor.ingredients;
-
 export default burgerConstructorSlice.reducer;

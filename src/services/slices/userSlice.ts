@@ -157,14 +157,4 @@ const userSlice = createSlice({
 
 export const { setAuthChecked } = userSlice.actions;
 
-// Селекторы
-export const selectUser = (state: RootState) => state.user.user;
-export const selectUserName = (state: RootState) => state.user.user?.name || '';
-export const selectIsAuthenticated = (state: RootState) =>
-  state.user.isAuthenticated;
-export const selectIsAuthChecked = (state: RootState) =>
-  state.user.isAuthChecked;
-export const selectUserLoading = (state: RootState) => state.user.loading;
-export const selectUserError = (state: RootState) => state.user.error;
-
 export default userSlice.reducer;

@@ -3,11 +3,8 @@ import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { useSelector, useDispatch } from '../../services/store';
-import {
-  selectIngredientById,
-  selectIngredients,
-  fetchIngredients
-} from '../../services/slices/ingredientsSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { selectIngredientById, selectIngredients } from '@selectors';
 
 export const IngredientDetails: FC = () => {
   const { id } = useParams<{ id: string }>();

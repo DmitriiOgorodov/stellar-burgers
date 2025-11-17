@@ -1,9 +1,7 @@
 import { useSelector, useDispatch } from '../../services/store';
 import { useEffect, FC } from 'react';
-import {
-  fetchIngredients,
-  selectIngredientsLoading
-} from '../../services/slices/ingredientsSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { selectIngredientsLoading } from '@selectors';
 
 import styles from './constructor-page.module.css';
 

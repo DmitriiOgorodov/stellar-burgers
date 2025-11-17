@@ -4,17 +4,15 @@ import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 import { useDispatch, useSelector } from '../../services/store';
+import { fetchOrderByNumber } from '../../services/slices/orderSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import {
-  fetchOrderByNumber,
   selectOrderDetails,
   selectOrderDetailsError,
-  selectOrderDetailsLoading
-} from '../../services/slices/orderSlice';
-import {
-  fetchIngredients,
+  selectOrderDetailsLoading,
   selectIngredients,
   selectIngredientsLoading
-} from '../../services/slices/ingredientsSlice';
+} from '@selectors';
 
 type OrderInfoProps = {
   showOrderNumber?: boolean;

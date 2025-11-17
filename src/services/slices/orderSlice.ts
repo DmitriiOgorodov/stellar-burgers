@@ -97,19 +97,4 @@ const orderSlice = createSlice({
 
 export const { clearCreationState, clearDetailsState } = orderSlice.actions;
 
-// Селекторы
-export const selectCreationOrder = (state: RootState) =>
-  state.order.create.order;
-export const selectCreationProcessing = (state: RootState) =>
-  state.order.create.loading;
-export const selectCreationError = (state: RootState) =>
-  state.order.create.error;
-
-export const selectOrderDetails = (state: RootState) =>
-  state.order.details.order;
-export const selectOrderDetailsLoading = (state: RootState) =>
-  state.order.details.loading;
-export const selectOrderDetailsError = (state: RootState) =>
-  state.order.details.error;
-
 export default orderSlice.reducer;
