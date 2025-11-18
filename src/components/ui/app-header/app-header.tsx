@@ -16,9 +16,12 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
         <NavLink to={'/'} className={styles.link} end>
           {({ isActive }) => (
             <span className={styles.link_inner}>
-              <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
+              <BurgerIcon
+                type={isActive ? 'primary' : 'secondary'}
+                className={styles.logo}
+              />
               <p
-                className={`text text_type_main-default ml-2 mr-10 ${isActive ? '' : 'text_color_inactive'}`}
+                className={`text text_type_main-default ml-2 mr-10 ${isActive ? styles.link_active : 'text_color_inactive'}`}
               >
                 Конструктор
               </p>
@@ -28,9 +31,12 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
         <NavLink to={'/feed'} className={styles.link}>
           {({ isActive }) => (
             <span className={styles.link_inner}>
-              <ListIcon type={isActive ? 'primary' : 'secondary'} />
+              <ListIcon
+                type={isActive ? 'primary' : 'secondary'}
+                className={styles.logo}
+              />
               <p
-                className={`text text_type_main-default ml-2 ${isActive ? '' : 'text_color_inactive'}`}
+                className={`text text_type_main-default ml-2 ${isActive ? styles.link_active : 'text_color_inactive'}`}
               >
                 Лента заказов
               </p>
@@ -46,7 +52,7 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => (
           <div className={styles.link_position_last}>
             <ProfileIcon type={isActive ? 'primary' : 'secondary'} />
             <p
-              className={`text text_type_main-default ml-2 ${isActive ? '' : 'text_color_inactive'}`}
+              className={`text text_type_main-default ml-2 ${isActive ? styles.link_active : 'text_color_inactive'}`}
             >
               {userName || 'Личный кабинет'}
             </p>
