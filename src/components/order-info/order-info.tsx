@@ -1,21 +1,43 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { useDispatch, useSelector } from '../../services/store';
+import { fetchOrderByNumber } from '../../services/slices/orderSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import {
+  selectOrderDetails,
+  selectOrderDetailsError,
+  selectOrderDetailsLoading,
+  selectIngredients,
+  selectIngredientsLoading
+} from '@selectors';
 
-export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+type OrderInfoProps = {
+  showOrderNumber?: boolean;
+};
 
-  const ingredients: TIngredient[] = [];
+export const OrderInfo: FC<OrderInfoProps> = ({ showOrderNumber = true }) => {
+  const { number } = useParams<{ number: string }>();
+  const dispatch = useDispatch();
+
+  const orderData = useSelector(selectOrderDetails);
+  const orderLoading = useSelector(selectOrderDetailsLoading);
+  const orderError = useSelector(selectOrderDetailsError);
+
+  const ingredients = useSelector(selectIngredients);
+  const ingredientsLoading = useSelector(selectIngredientsLoading);
+
+  useEffect(() => {
+    if (!ingredients.length) {
+      dispatch(fetchIngredients());
+    }
+
+    if (number) {
+      dispatch(fetchOrderByNumber(Number(number)));
+    }
+  }, [dispatch, number, ingredients.length]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
@@ -59,9 +81,15 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (orderLoading || ingredientsLoading) {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  if (!orderInfo || orderError) {
+    return <p className={`pt-6 text text_type_main-medium`}>Заказ не найден</p>;
+  }
+
+  return (
+    <OrderInfoUI orderInfo={orderInfo!} showOrderNumber={showOrderNumber} />
+  );
 };
