@@ -1,7 +1,7 @@
 import ingredientsReducer, {
   fetchIngredients,
   initialState
-} from '../slices/ingredientsSlice';
+} from '../services/slices/ingredientsSlice';
 import { TIngredient } from '@utils-types';
 
 const mockIngredients: TIngredient[] = [

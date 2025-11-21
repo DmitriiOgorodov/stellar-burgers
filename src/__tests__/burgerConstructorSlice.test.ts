@@ -4,7 +4,7 @@ import constructorReducer, {
   initialState,
   moveIngredient,
   removeIngredient
-} from '../slices/burgerConstructorSlice';
+} from '../services/slices/burgerConstructorSlice';
 import { TConstructorIngredient } from '@utils-types';
 
 const createIngredient = (ingredients: Partial<TConstructorIngredient>) => ({
