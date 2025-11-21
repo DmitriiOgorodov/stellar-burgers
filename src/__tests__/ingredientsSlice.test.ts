@@ -1,4 +1,4 @@
-import reducer, { fetchIngredients } from '../ingredientsSlice';
+import reducer, { fetchIngredients } from '../services/slices/ingredientsSlice';
 
 describe('ingredientsSlice', () => {
   it('pending: loading=true, error=null', () => {

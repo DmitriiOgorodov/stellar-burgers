@@ -3,7 +3,7 @@ import reducer, {
   removeIngredient,
   moveIngredient,
   clearConstructor
-} from '../burgerConstructorSlice';
+} from '../services/slices/burgerConstructorSlice';
 
 import { TIngredient } from '@utils-types';
 
