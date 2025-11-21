@@ -19,7 +19,7 @@ export interface OrderFeedState {
   profile: OrderHistoryState;
 }
 
-const initialState: OrderFeedState = {
+export const initialState: OrderFeedState = {
   general: {
     orders: [],
     total: 0,
