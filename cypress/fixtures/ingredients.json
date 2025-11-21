@@ -1,0 +1,44 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "bun-1",
+      "name": "Краторная булка N-200i",
+      "type": "bun",
+      "proteins": 80,
+      "fat": 24,
+      "carbohydrates": 53,
+      "calories": 420,
+      "price": 1255,
+      "image": "/images/bun.png",
+      "image_large": "/images/bun-large.png",
+      "image_mobile": "/images/bun-mobile.png"
+    },
+    {
+      "_id": "main-1",
+      "name": "Мясо бессмертных моллюсков Protostomia",
+      "type": "main",
+      "proteins": 433,
+      "fat": 244,
+      "carbohydrates": 33,
+      "calories": 420,
+      "price": 3000,
+      "image": "/images/main.png",
+      "image_large": "/images/main-large.png",
+      "image_mobile": "/images/main-mobile.png"
+    },
+    {
+      "_id": "sauce-1",
+      "name": "Соус фирменный",
+      "type": "sauce",
+      "proteins": 10,
+      "fat": 10,
+      "carbohydrates": 10,
+      "calories": 100,
+      "price": 50,
+      "image": "/images/sauce.png",
+      "image_large": "/images/sauce-large.png",
+      "image_mobile": "/images/sauce-mobile.png"
+    }
+  ]
+}
