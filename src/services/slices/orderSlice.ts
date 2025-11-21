@@ -14,7 +14,7 @@ interface OrderState {
   details: OrderDetailsState;
 }
 
-const initialState: OrderState = {
+export const initialState: OrderState = {
   create: {
     order: null,
     loading: false,

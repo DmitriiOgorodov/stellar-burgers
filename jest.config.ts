@@ -16,6 +16,9 @@ const config: Config = {
 
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@slices/(.*)$': '<rootDir>/src/services/slices/$1',
+    '^@api$': '<rootDir>/src/utils/burger-api.ts',
+    '^@utils-types$': '<rootDir>/src/utils/types',
     '\\.(css|less|scss)$': 'identity-obj-proxy',
     '\\.svg$': 'jest-svg-transformer',
   },
