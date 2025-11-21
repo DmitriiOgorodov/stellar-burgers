@@ -62,8 +62,8 @@ describe('Конструктор бургера — интеграционные
     // Проверяем, что в модалке отображается именно этот ингредиент
     cy.get('h3').contains(ingredientName).should('be.visible');
 
-    // Закрываем по крестику (иконка внутри кнопки)
-    cy.get('button').find('svg').first().click({ force: true });
+    // Закрываем модалку нажатием Escape (надежно, не зависит от CSS‑модулей)
+    cy.get('body').type('{esc}');
     cy.get('h3').contains(ingredientName).should('not.exist');
 
     // Снова открываем и закрываем по клику на оверлей
@@ -72,7 +72,11 @@ describe('Конструктор бургера — интеграционные
       .first()
       .click();
     cy.get('h3').contains(ingredientName).should('be.visible');
-    cy.get('div[class*="overlay"]').click('center', { force: true });
+    // Клик по оверлею: целимся в последний дочерний элемент портала (#modals), где рендерится overlay
+    cy.get('#modals')
+      .children()
+      .last()
+      .click('center', { force: true });
     cy.get('h3').contains(ingredientName).should('not.exist');
   });
 
@@ -103,8 +107,8 @@ describe('Конструктор бургера — интеграционные
     cy.contains('идентификатор заказа').should('be.visible');
     cy.contains('424242').should('be.visible');
 
-    // Закрываем модалку по крестику
-    cy.get('button').find('svg').first().click({ force: true });
+    // Закрываем модалку нажатием Escape
+    cy.get('body').type('{esc}');
     cy.contains('идентификатор заказа').should('not.exist');
 
     // Проверяем, что конструктор пуст (появились плейсхолдеры)
